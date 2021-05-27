@@ -1,12 +1,12 @@
 import sbt.Keys._
 import sbt._
 
-object Utils extends Build {
+object Build {
 
-  val branch = Process("git" :: "rev-parse" :: "--abbrev-ref" :: "HEAD" :: Nil).!!.trim
-  val suffix = if (branch == "master") "" else "-SNAPSHOT"
+  // val branch = Process("git" :: "rev-parse" :: "--abbrev-ref" :: "HEAD" :: Nil).!!.trim
+  // val suffix = if (branch == "master") "" else "-SNAPSHOT"
 
-  val libVersion = "1.0.4" + suffix
+  val libVersion = "1.0.5" //+ suffix
 
 
   def scalacOptionsVersion(sv: String): Seq[String] = {
@@ -23,16 +23,15 @@ object Utils extends Build {
   }
 
   val sharedSettings = Seq(
-    version := libVersion,
     organization := "com.flipkart",
-    scalaVersion := "2.11.7",
-    crossScalaVersions := Seq("2.10.6", "2.11.7"),
+    scalaVersion := "2.12.4",
+    crossScalaVersions := Seq("2.10.6", "2.11.7", "2.12.4"),
     // Workaround for a scaladoc bug which causes it to choke on empty classpaths.
     unmanagedClasspath in Compile += Attributed.blank(new java.io.File("doesnotexist")),
-    libraryDependencies ++= Seq(
-      "junit" % "junit" % "4.8.1" % "test",
-      "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-    ),
+//    libraryDependencies ++= Seq(
+//      "junit" % "junit" % "4.8.1" % "test"
+//      "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+//    ),
 
     scalacOptions := scalacOptionsVersion(scalaVersion.value),
 
@@ -47,16 +46,12 @@ object Utils extends Build {
     // Sonatype publishing
     publishArtifact in Test := false,
     publishMavenStyle := true,
+    publishTo := Some("nexus" at "http://artifactory.fkinternal.com/artifactory/v1.0/artifacts/libs-release-local"),
+
     autoAPIMappings := true,
     apiURL := Some(url("https://github.com/Flipkart/espion")),
     pomExtra :=
       <url>https://github.com/Flipkart/espion</url>
-        <licenses>
-          <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-          </license>
-        </licenses>
         <scm>
           <url>git@github.com:Flipkart/utils</url>
           <connection>scm:git:git@github.com:Flipkart/espion</connection>
@@ -70,12 +65,11 @@ object Utils extends Build {
         </developers>
   )
 
-
   lazy val root = Project(
     id = "espion",
     base = file("."),
-    settings = Defaults.coreDefaultSettings ++
-      sharedSettings
-  )
+  ).settings(
+    Defaults.coreDefaultSettings ++
+      sharedSettings)
 
 }

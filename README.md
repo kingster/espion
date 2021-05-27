@@ -60,7 +60,7 @@ libraryDependencies += "com.flipkart" %% "espion" % "1.0.4"
 
 Then following in build.sbt
 ```
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 ```
 
 Maven:
